@@ -9,6 +9,8 @@ import '../providers/city_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/panchang_card.dart';
 import 'city_picker_screen.dart';
+import '../widgets/samvat_vrat_card.dart';
+import '../widgets/share_helper.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -22,12 +24,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   String _formatDate(DateTime d) {
     const months = [
-      'January','February','March','April','May','June',
-      'July','August','September','October','November','December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     const weekdays = [
-      '','Monday','Tuesday','Wednesday',
-      'Thursday','Friday','Saturday','Sunday'
+      '',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
     ];
     return '${weekdays[d.weekday]}, ${d.day} ${months[d.month - 1]} ${d.year}';
   }
@@ -36,8 +54,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final h = dt.hour > 12
         ? dt.hour - 12
         : dt.hour == 0
-            ? 12
-            : dt.hour;
+        ? 12
+        : dt.hour;
     final m = dt.minute.toString().padLeft(2, '0');
     final a = dt.hour >= 12 ? 'PM' : 'AM';
     return '$h:$m $a';
@@ -55,30 +73,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final city = ref.watch(cityProvider) ??
+    final city =
+        ref.watch(cityProvider) ??
         indianCities.firstWhere((c) => c.name == 'New Delhi');
 
     final panchang = PanchangEngine.calculate(_selectedDate, city.utcOffset);
 
     final sunrise = DateTime(
-      _selectedDate.year, _selectedDate.month, _selectedDate.day,
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
       city.sunriseMinutesFromMidnight ~/ 60,
       city.sunriseMinutesFromMidnight % 60,
     );
     final sunset = DateTime(
-      _selectedDate.year, _selectedDate.month, _selectedDate.day,
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
       city.sunsetMinutesFromMidnight ~/ 60,
       city.sunsetMinutesFromMidnight % 60,
     );
 
-    final muhurat =
-        MuhuratEngine.calculate(sunrise, sunset, _selectedDate.weekday);
+    final muhurat = MuhuratEngine.calculate(
+      sunrise,
+      sunset,
+      _selectedDate.weekday,
+    );
 
-    final todayFestivals =
-        festivalsForDate(_selectedDate.month, _selectedDate.day);
+    final todayFestivals = festivalsForDate(
+      _selectedDate.month,
+      _selectedDate.day,
+    );
 
     return Scaffold(
       backgroundColor: AppTheme.cream,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          ShareHelper.shareWithConfirm(
+            context,
+            date: _selectedDate,
+            panchang: panchang,
+            muhurat: muhurat,
+            cityName: city.name,
+          );
+        },
+        backgroundColor: AppTheme.saffron,
+        icon: const Icon(Icons.share, color: Colors.white),
+        label: const Text(
+          'Share',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(city.name),
@@ -94,6 +143,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: 16),
                   ],
                   PanchangCard(data: panchang),
+                  const SizedBox(height: 16),
+                  SamvatVratCard(
+                    panchang: panchang,
+                    date: _selectedDate,
+                  ), // add this
                   const SizedBox(height: 16),
                   _buildSunCard(sunrise, sunset),
                   const SizedBox(height: 16),
@@ -201,7 +255,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 builder: (context, child) => Theme(
                   data: Theme.of(context).copyWith(
                     colorScheme: const ColorScheme.light(
-                        primary: AppTheme.saffron),
+                      primary: AppTheme.saffron,
+                    ),
                   ),
                   child: child!,
                 ),
@@ -225,7 +280,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 if (_isToday(_selectedDate))
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 2),
+                      horizontal: 12,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.saffron,
                       borderRadius: BorderRadius.circular(10),
@@ -284,14 +341,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: festivals
-                  .map((f) => Text(
-                        '${f.name} — ${f.nameHindi}',
-                        style: AppTheme.poppins(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ))
+                  .map(
+                    (f) => Text(
+                      '${f.name} — ${f.nameHindi}',
+                      style: AppTheme.poppins(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ),
@@ -316,8 +375,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Column(
         children: [
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -325,13 +383,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   AppTheme.saffron.withOpacity(0.04),
                 ],
               ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.wb_twilight,
-                    color: AppTheme.saffron, size: 18),
+                const Icon(
+                  Icons.wb_twilight,
+                  color: AppTheme.saffron,
+                  size: 18,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'सूर्योदय / सूर्यास्त',
@@ -357,17 +419,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Row(
               children: [
                 Expanded(
-                    child: _sunBlock(
-                        '🌅', 'Sunrise', 'सूर्योदय', _fmt(sunrise),
-                        Colors.orange)),
-                Container(
-                    width: 1,
-                    height: 60,
-                    color: Colors.orange.shade100),
+                  child: _sunBlock(
+                    '🌅',
+                    'Sunrise',
+                    'सूर्योदय',
+                    _fmt(sunrise),
+                    Colors.orange,
+                  ),
+                ),
+                Container(width: 1, height: 60, color: Colors.orange.shade100),
                 Expanded(
-                    child: _sunBlock(
-                        '🌇', 'Sunset', 'सूर्यास्त', _fmt(sunset),
-                        AppTheme.darkBrown)),
+                  child: _sunBlock(
+                    '🌇',
+                    'Sunset',
+                    'सूर्यास्त',
+                    _fmt(sunset),
+                    AppTheme.darkBrown,
+                  ),
+                ),
               ],
             ),
           ),
@@ -376,25 +445,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _sunBlock(String emoji, String en, String hi, String time,
-      Color color) {
+  Widget _sunBlock(
+    String emoji,
+    String en,
+    String hi,
+    String time,
+    Color color,
+  ) {
     return Column(
       children: [
         Text(emoji, style: const TextStyle(fontSize: 26)),
         const SizedBox(height: 4),
-        Text(hi,
-            style: AppTheme.poppins(
-                fontSize: 12, color: AppTheme.saffron,
-                fontWeight: FontWeight.w600)),
-        Text(en,
-            style: AppTheme.poppins(
-                fontSize: 11, color: Colors.grey.shade400)),
+        Text(
+          hi,
+          style: AppTheme.poppins(
+            fontSize: 12,
+            color: AppTheme.saffron,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Text(
+          en,
+          style: AppTheme.poppins(fontSize: 11, color: Colors.grey.shade400),
+        ),
         const SizedBox(height: 4),
-        Text(time,
-            style: AppTheme.poppins(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: color)),
+        Text(
+          time,
+          style: AppTheme.poppins(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
       ],
     );
   }
@@ -415,8 +497,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Column(
         children: [
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -424,26 +505,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   AppTheme.saffron.withOpacity(0.04),
                 ],
               ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.access_time,
-                    color: AppTheme.saffron, size: 18),
+                const Icon(
+                  Icons.access_time,
+                  color: AppTheme.saffron,
+                  size: 18,
+                ),
                 const SizedBox(width: 8),
-                Text('मुहूर्त',
-                    style: AppTheme.poppins(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.saffron,
-                    )),
+                Text(
+                  'मुहूर्त',
+                  style: AppTheme.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.saffron,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Text('Muhurat Timings',
-                    style: AppTheme.poppins(
-                      fontSize: 11,
-                      color: Colors.grey.shade400,
-                    )),
+                Text(
+                  'Muhurat Timings',
+                  style: AppTheme.poppins(
+                    fontSize: 11,
+                    color: Colors.grey.shade400,
+                  ),
+                ),
               ],
             ),
           ),
@@ -451,25 +540,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _muhuratRow('🌄', 'Brahma Muhurat', 'ब्रह्म मुहूर्त',
-                    '${_fmt(m.brahmaMuhurtStart)} – ${_fmt(m.brahmaMuhurtEnd)}',
-                    Colors.amber.shade700, true),
+                _muhuratRow(
+                  '🌄',
+                  'Brahma Muhurat',
+                  'ब्रह्म मुहूर्त',
+                  '${_fmt(m.brahmaMuhurtStart)} – ${_fmt(m.brahmaMuhurtEnd)}',
+                  Colors.amber.shade700,
+                  true,
+                ),
                 Divider(height: 1, color: Colors.orange.shade50),
-                _muhuratRow('✨', 'Abhijit Muhurat', 'अभिजित मुहूर्त',
-                    '${_fmt(m.abhijitStart)} – ${_fmt(m.abhijitEnd)}',
-                    Colors.green.shade700, true),
+                _muhuratRow(
+                  '✨',
+                  'Abhijit Muhurat',
+                  'अभिजित मुहूर्त',
+                  '${_fmt(m.abhijitStart)} – ${_fmt(m.abhijitEnd)}',
+                  Colors.green.shade700,
+                  true,
+                ),
                 Divider(height: 1, color: Colors.orange.shade50),
-                _muhuratRow('🚫', 'Rahu Kaal', 'राहु काल',
-                    '${_fmt(m.rahuKaalStart)} – ${_fmt(m.rahuKaalEnd)}',
-                    Colors.red.shade700, false),
+                _muhuratRow(
+                  '🚫',
+                  'Rahu Kaal',
+                  'राहु काल',
+                  '${_fmt(m.rahuKaalStart)} – ${_fmt(m.rahuKaalEnd)}',
+                  Colors.red.shade700,
+                  false,
+                ),
                 Divider(height: 1, color: Colors.orange.shade50),
-                _muhuratRow('🚫', 'Gulika Kaal', 'गुलिका काल',
-                    '${_fmt(m.gulikaKaalStart)} – ${_fmt(m.gulikaKaalEnd)}',
-                    Colors.red.shade400, false),
+                _muhuratRow(
+                  '🚫',
+                  'Gulika Kaal',
+                  'गुलिका काल',
+                  '${_fmt(m.gulikaKaalStart)} – ${_fmt(m.gulikaKaalEnd)}',
+                  Colors.red.shade400,
+                  false,
+                ),
                 Divider(height: 1, color: Colors.orange.shade50),
-                _muhuratRow('🚫', 'Yamaganda', 'यमगण्ड',
-                    '${_fmt(m.yamagandaStart)} – ${_fmt(m.yamagandaEnd)}',
-                    Colors.red.shade300, false),
+                _muhuratRow(
+                  '🚫',
+                  'Yamaganda',
+                  'यमगण्ड',
+                  '${_fmt(m.yamagandaStart)} – ${_fmt(m.yamagandaEnd)}',
+                  Colors.red.shade300,
+                  false,
+                ),
               ],
             ),
           ),
@@ -478,8 +592,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _muhuratRow(String emoji, String en, String hi, String time,
-      Color color, bool auspicious) {
+  Widget _muhuratRow(
+    String emoji,
+    String en,
+    String hi,
+    String time,
+    Color color,
+    bool auspicious,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -490,27 +610,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(hi,
-                    style: AppTheme.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: color,
-                    )),
-                Text(en,
-                    style: AppTheme.poppins(
-                        fontSize: 11, color: Colors.grey.shade400)),
+                Text(
+                  hi,
+                  style: AppTheme.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  en,
+                  style: AppTheme.poppins(
+                    fontSize: 11,
+                    color: Colors.grey.shade400,
+                  ),
+                ),
               ],
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(time,
-                  style: AppTheme.poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: color,
-                  )),
+              Text(
+                time,
+                style: AppTheme.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
               Text(
                 auspicious ? '✓ Auspicious' : '✗ Avoid',
                 style: AppTheme.poppins(
