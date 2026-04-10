@@ -1,4 +1,4 @@
-package com.example.purna_panchang
+package com.harshyadav.purnapanchang
 
 import io.flutter.embedding.android.FlutterActivity
 

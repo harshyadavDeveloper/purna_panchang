@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:purna_panchang/l10n/app_strings.dart';
+import 'package:purna_panchang/providers/language_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/calendar_screen.dart';
 import 'theme/app_theme.dart';
@@ -28,20 +30,23 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class RootScreen extends StatefulWidget {
+class RootScreen extends ConsumerStatefulWidget {
   const RootScreen({super.key});
 
   @override
-  State<RootScreen> createState() => _RootScreenState();
+  ConsumerState<RootScreen> createState() => _RootScreenState();
 }
 
-class _RootScreenState extends State<RootScreen> {
+class _RootScreenState extends ConsumerState<RootScreen> {
   int _currentIndex = 0;
 
   final _screens = const [HomeScreen(), CalendarScreen()];
 
   @override
   Widget build(BuildContext context) {
+    final lang = ref.watch(languageProvider);
+    final s = AppStrings(lang);
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: Column(
@@ -57,16 +62,16 @@ class _RootScreenState extends State<RootScreen> {
               HapticFeedback.selectionClick();
               setState(() => _currentIndex = i);
             },
-            items: const [
+            items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.wb_sunny_outlined),
-                activeIcon: Icon(Icons.wb_sunny),
-                label: 'पंचांग',
+                icon: const Icon(Icons.wb_sunny_outlined),
+                activeIcon: const Icon(Icons.wb_sunny),
+                label: s.navPanchang,       // 'पंचांग' or 'Panchang'
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_month_outlined),
-                activeIcon: Icon(Icons.calendar_month),
-                label: 'कैलेंडर',
+                icon: const Icon(Icons.calendar_month_outlined),
+                activeIcon: const Icon(Icons.calendar_month),
+                label: s.navCalendar,       // 'कैलेंडर' or 'Calendar'
               ),
             ],
           ),
