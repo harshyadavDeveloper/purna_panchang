@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:purna_panchang/l10n/app_strings.dart';
 import '../core/panchang/panchang_engine.dart';
 import '../theme/app_theme.dart';
 
 class PanchangCard extends StatelessWidget {
   final PanchangData data;
+  final AppStrings strings;
 
-  const PanchangCard({super.key, required this.data});
+  const PanchangCard({super.key, required this.data,required this.strings});
 
   @override
   Widget build(BuildContext context) {
@@ -15,44 +17,20 @@ class PanchangCard extends StatelessWidget {
       headerEnglish: 'Panchang',
       child: Column(
         children: [
-          _PanchangRow(
-            sanskrit: 'वार',
-            transliteration: 'Vara',
-            value: data.varaName,
-            icon: '☀️',
-          ),
+          _PanchangRow(sanskrit: strings.vara,     transliteration: strings.varaEn,     value: strings.weekday(data.varaName),          icon: '☀️'),
+
           const _RowDivider(),
-          _PanchangRow(
-            sanskrit: 'तिथि',
-            transliteration: 'Tithi',
-            value: data.tithiName,
-            subtitle: data.tithiPaksha,
-            icon: '🌙',
-            badge: '#${data.tithiIndex}',
-          ),
+          _PanchangRow(sanskrit: strings.tithi,    transliteration: strings.tithiEn,    value: strings.tithiName(data.tithiName),       icon: '🌙', subtitle: strings.paksha(data.tithiPaksha), badge: '#${data.tithiIndex}'),
+
           const _RowDivider(),
-          _PanchangRow(
-            sanskrit: 'नक्षत्र',
-            transliteration: 'Nakshatra',
-            value: data.nakshatraName,
-            icon: '⭐',
-            badge: '#${data.nakshatraIndex}',
-          ),
+          _PanchangRow(sanskrit: strings.nakshatra,transliteration: strings.nakshatraEn,value: strings.nakshatraName(data.nakshatraName),icon: '⭐', badge: '#${data.nakshatraIndex}'),
+
           const _RowDivider(),
-          _PanchangRow(
-            sanskrit: 'योग',
-            transliteration: 'Yoga',
-            value: data.yogaName,
-            icon: '◎',
-            badge: '#${data.yogaIndex}',
-          ),
+          _PanchangRow(sanskrit: strings.yoga,     transliteration: strings.yogaEn,     value: strings.yogaName(data.yogaName),         icon: '◎', badge: '#${data.yogaIndex}'),
+
           const _RowDivider(),
-          _PanchangRow(
-            sanskrit: 'करण',
-            transliteration: 'Karana',
-            value: data.karanaName,
-            icon: '◑',
-          ),
+         _PanchangRow(sanskrit: strings.karana,   transliteration: strings.karanaEn,   value: strings.karanaName(data.karanaName),     icon: '◑'),
+
         ],
       ),
     );

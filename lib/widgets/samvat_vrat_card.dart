@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:purna_panchang/l10n/app_strings.dart';
 import '../core/panchang/vrat_calculator.dart';
 import '../core/panchang/samvat_calculator.dart';
 import '../core/panchang/panchang_engine.dart';
@@ -7,11 +8,13 @@ import '../theme/app_theme.dart';
 class SamvatVratCard extends StatelessWidget {
   final PanchangData panchang;
   final DateTime date;
+  final AppStrings strings;
 
   const SamvatVratCard({
     super.key,
     required this.panchang,
     required this.date,
+    required this.strings
   });
 
   @override
@@ -53,7 +56,7 @@ class SamvatVratCard extends StatelessWidget {
                     color: AppTheme.saffron, size: 18),
                 const SizedBox(width: 8),
                 Text(
-                  'संवत् & व्रत',
+                   strings.samvatVrat,
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 15,
@@ -63,7 +66,7 @@ class SamvatVratCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Samvat & Vrat',
+                   strings.samvatVratEn,
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 11,
@@ -80,13 +83,13 @@ class SamvatVratCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Samvat section ────────────────────────────
-                _samvatRow('विक्रम संवत्', 'Vikram Samvat',
+                _samvatRow(strings.vikramSamvat, 'Vikram Samvat',
                     '${samvat.vikramSamvat} — ${samvat.vikramYear}'),
                 const SizedBox(height: 8),
-                _samvatRow('शक संवत्', 'Shaka Samvat',
+                _samvatRow(strings.shakaSamvat, 'Shaka Samvat',
                     '${samvat.shakaSamvat}'),
                 const SizedBox(height: 8),
-                _samvatRow('गुजराती संवत्', 'Gujarati Samvat',
+                _samvatRow(strings.gujaratiSamvat, 'Gujarati Samvat',
                     '${samvat.gujaratiSamvat}'),
 
                 if (vrats.isNotEmpty) ...[
@@ -112,7 +115,7 @@ class SamvatVratCard extends StatelessWidget {
                                   Row(
                                     children: [
                                       Text(
-                                        v.nameHindi,
+                                          strings.isHindi ? v.nameHindi : v.name,
                                         style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 14,
@@ -132,8 +135,8 @@ class SamvatVratCard extends StatelessWidget {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
-                                          child: const Text(
-                                            'Major',
+                                          child:  Text(
+                                            strings.major,
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
                                               fontSize: 9,
@@ -174,7 +177,7 @@ class SamvatVratCard extends StatelessWidget {
                       const Text('😊', style: TextStyle(fontSize: 18)),
                       const SizedBox(width: 8),
                       Text(
-                        'No vrat today',
+                        strings.noVratToday,
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 13,
