@@ -14,7 +14,7 @@ class SamvatVratCard extends StatelessWidget {
     super.key,
     required this.panchang,
     required this.date,
-    required this.strings
+    required this.strings,
   });
 
   @override
@@ -47,16 +47,20 @@ class SamvatVratCard extends StatelessWidget {
                   AppTheme.saffron.withOpacity(0.04),
                 ],
               ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.temple_hindu,
-                    color: AppTheme.saffron, size: 18),
+                const Icon(
+                  Icons.temple_hindu,
+                  color: AppTheme.saffron,
+                  size: 18,
+                ),
                 const SizedBox(width: 8),
                 Text(
-                   strings.samvatVrat,
+                  strings.samvatVrat,
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 15,
@@ -66,7 +70,7 @@ class SamvatVratCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                   strings.samvatVratEn,
+                  strings.samvatVratEn,
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 11,
@@ -83,93 +87,105 @@ class SamvatVratCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Samvat section ────────────────────────────
-                _samvatRow(strings.vikramSamvat, 'Vikram Samvat',
-                    '${samvat.vikramSamvat} — ${samvat.vikramYear}'),
+                _samvatRow(
+                  strings.vikramSamvat,
+                  'Vikram Samvat',
+                  '${samvat.vikramSamvat} — ${samvat.vikramYear}',
+                ),
                 const SizedBox(height: 8),
-                _samvatRow(strings.shakaSamvat, 'Shaka Samvat',
-                    '${samvat.shakaSamvat}'),
+                _samvatRow(
+                  strings.shakaSamvat,
+                  'Shaka Samvat',
+                  '${samvat.shakaSamvat}',
+                ),
                 const SizedBox(height: 8),
-                _samvatRow(strings.gujaratiSamvat, 'Gujarati Samvat',
-                    '${samvat.gujaratiSamvat}'),
+                _samvatRow(
+                  strings.gujaratiSamvat,
+                  'Gujarati Samvat',
+                  '${samvat.gujaratiSamvat}',
+                ),
 
                 if (vrats.isNotEmpty) ...[
-                  Divider(
-                      height: 24, color: Colors.orange.shade50),
+                  Divider(height: 24, color: Colors.orange.shade50),
 
                   // ── Vrat section ──────────────────────────
-                  ...vrats.map((v) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              v.isMajor ? '🪔' : '🙏',
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                          strings.isHindi ? v.nameHindi : v.name,
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: v.isMajor
-                                              ? AppTheme.saffron
-                                              : AppTheme.darkBrown,
+                  ...vrats.map(
+                    (v) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            v.isMajor ? '🪔' : '🙏',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      strings.isHindi ? v.nameHindi : v.name,
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: v.isMajor
+                                            ? AppTheme.saffron
+                                            : AppTheme.darkBrown,
+                                      ),
+                                    ),
+                                    if (v.isMajor) ...[
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 1,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.saffron,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          strings.major,
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 9,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                      if (v.isMajor) ...[
-                                        const SizedBox(width: 6),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 6, vertical: 1),
-                                          decoration: BoxDecoration(
-                                            color: AppTheme.saffron,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          child:  Text(
-                                            strings.major,
-                                            style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 9,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
                                     ],
+                                  ],
+                                ),
+                                Text(
+                                  v.name,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 11,
+                                    color: Colors.grey.shade500,
                                   ),
-                                  Text(
-                                    v.name,
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 11,
-                                      color: Colors.grey.shade500,
-                                    ),
+                                ),
+                                Text(
+                                  v.description,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 11,
+                                    color: Colors.grey.shade400,
                                   ),
-                                  Text(
-                                    v.description,
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 11,
-                                      color: Colors.grey.shade400,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ] else ...[
                   Divider(height: 24, color: Colors.orange.shade50),
                   Row(

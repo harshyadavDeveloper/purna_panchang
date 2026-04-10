@@ -14,10 +14,8 @@ class AstroCalculator {
   static double julianDay(DateTime utc) {
     int y = utc.year;
     int m = utc.month;
-    double d = utc.day +
-        utc.hour / 24.0 +
-        utc.minute / 1440.0 +
-        utc.second / 86400.0;
+    double d =
+        utc.day + utc.hour / 24.0 + utc.minute / 1440.0 + utc.second / 86400.0;
 
     if (m <= 2) {
       y -= 1;
@@ -50,7 +48,8 @@ class AstroCalculator {
     double Mrad = toRad(M);
 
     // Equation of centre
-    double C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * sin(Mrad) +
+    double C =
+        (1.914602 - 0.004817 * T - 0.000014 * T * T) * sin(Mrad) +
         (0.019993 - 0.000101 * T) * sin(2 * Mrad) +
         0.000289 * sin(3 * Mrad);
 
@@ -90,7 +89,8 @@ class AstroCalculator {
     double Frad = toRad(F);
 
     // Longitude correction (major terms only — sufficient for Panchang)
-    double dL = 6288774 * sin(Mprad) +
+    double dL =
+        6288774 * sin(Mprad) +
         1274027 * sin(2 * Drad - Mprad) +
         658314 * sin(2 * Drad) +
         213618 * sin(2 * Mprad) +

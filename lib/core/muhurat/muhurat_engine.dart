@@ -27,7 +27,7 @@ class MuhuratData {
 class MuhuratEngine {
   // Rahu Kaal slot index per weekday (Sun=0 to Sat=6)
   // Slot order: day is divided into 8 equal parts, index = which part is Rahu
-  static const List<int> rahuSlot  = [8, 2, 7, 5, 6, 4, 3]; // Sun..Sat
+  static const List<int> rahuSlot = [8, 2, 7, 5, 6, 4, 3]; // Sun..Sat
   static const List<int> gulikaSlot = [6, 5, 4, 3, 2, 1, 7];
   static const List<int> yamagandaSlot = [5, 4, 3, 2, 1, 7, 6];
 
@@ -41,27 +41,27 @@ class MuhuratEngine {
 
     // --- Rahu Kaal ---
     final rahuStart = sunrise.add(slotDuration * rahuSlot[day]);
-    final rahuEnd   = rahuStart.add(slotDuration);
+    final rahuEnd = rahuStart.add(slotDuration);
 
     // --- Gulika Kaal ---
     final gulikaStart = sunrise.add(slotDuration * gulikaSlot[day]);
-    final gulikaEnd   = gulikaStart.add(slotDuration);
+    final gulikaEnd = gulikaStart.add(slotDuration);
 
     // --- Yamaganda ---
     final yamagandaStart = sunrise.add(slotDuration * yamagandaSlot[day]);
-    final yamagandaEnd   = yamagandaStart.add(slotDuration);
+    final yamagandaEnd = yamagandaStart.add(slotDuration);
 
     // --- Abhijit Muhurat ---
     // Middle of the day ± 24 minutes (approx 1 ghati = 24 min)
     final middleOfDay = sunrise.add(dayDuration ~/ 2);
     final abhijitStart = middleOfDay.subtract(const Duration(minutes: 24));
-    final abhijitEnd   = middleOfDay.add(const Duration(minutes: 24));
+    final abhijitEnd = middleOfDay.add(const Duration(minutes: 24));
 
     // --- Brahma Muhurat ---
     // 1 hour 36 minutes before sunrise (2 muhurats = 48 min before sunrise
     // actually starts 1h36m before and ends 48min before sunrise)
     final brahmaMuhurtStart = sunrise.subtract(const Duration(minutes: 96));
-    final brahmaMuhurtEnd   = sunrise.subtract(const Duration(minutes: 48));
+    final brahmaMuhurtEnd = sunrise.subtract(const Duration(minutes: 48));
 
     return MuhuratData(
       rahuKaalStart: rahuStart,
